@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/server.js",
+      "use": "@vercel/node",
+      "config": {
+        "esModules": true
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/health",
+      "dest": "src/server.js"
+    },
+    {
+      "src": "/auth/(.*)",
+      "dest": "src/server.js"
+    },
+    {
+      "src": "/affiliate/(.*)",
+      "dest": "src/server.js"
+    },
+    {
+      "src": "/feedback/(.*)",
+      "dest": "src/server.js"
+    },
+    {
+      "src": "/courses/(.*)",
+      "dest": "src/server.js"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "src/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "src/server.js"
+    }
+  ]
+}

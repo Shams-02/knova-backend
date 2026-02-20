@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+enum ReferralStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum FeedbackType {
+  IMPROVEMENT
+  BUG
+  TECHNICAL
+}
+
+enum FeedbackStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model Users {
+  id             String      @id @default(uuid())
+  email          String      @unique
+  password       String
+  name           String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  role           Role        @default(USER)
+  stripeCustomerId String?   @map("stripe_customer_id") @db.Text
+  affiliate      Affiliates? // One-to-one relationship
+  feedback       Feedback[]  // One-to-many relationship
+  referrals      Referrals[] @relation("ReferredUser")
+
+  @@map("users")
+}
+
+model Affiliates {
+  id             String      @id @default(uuid())
+  userId         String      @unique @map("user_id")
+  user           Users       @relation(fields: [userId], references: [id])
+  referralLink   String
+  totalEarnings  Decimal     @default(0.00)
+  nextPayout     Decimal     @default(0.00)
+  nextPayoutDate DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  referrals      Referrals[] // One-to-many relationship
+
+  @@map("affiliates")
+}
+
+model Referrals {
+  id            String         @id @default(uuid())
+  affiliateId   String         @map("affiliate_id")
+  affiliate     Affiliates     @relation(fields: [affiliateId], references: [id])
+  referredUserId String?        @map("referred_user_id")
+  referredUser  Users?         @relation("ReferredUser", fields: [referredUserId], references: [id])
+  referredEmail String
+  status        ReferralStatus @default(PENDING)
+  commission    Decimal        @default(0.00)
+  createdAt     DateTime       @default(now())
+
+  @@map("referrals")
+}
+
+model Feedback {
+  id        String         @id @default(uuid())
+  userId    String?        @map("user_id")
+  user      Users?         @relation(fields: [userId], references: [id])
+  userName  String
+  userEmail String
+  type      FeedbackType
+  message   String         @db.Text
+  timestamp DateTime       @default(now())
+  status    FeedbackStatus @default(NEW)
+  userAgent String         @db.Text
+
+  @@map("feedback")
+}
+
+model Courses {
+  id          String   @id @default(uuid())
+  topic       String
+  description String @db.Text
+  modules     Modules[]
+
+  @@map("courses")
+}
+
+model Modules {
+  id          String   @id @default(uuid())
+  courseId    String   @map("course_id")
+  course      Courses  @relation(fields: [courseId], references: [id])
+  name        String
+  keyConcepts String[]
+
+  @@map("modules")
+}

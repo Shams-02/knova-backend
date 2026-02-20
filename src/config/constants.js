@@ -1,0 +1,24 @@
+export const USER_ROLES = {
+    USER: 'USER',
+    ADMIN: 'ADMIN',
+    SUPERADMIN: 'SUPERADMIN',
+};
+
+export const FEEDBACK_TYPES = {
+    IMPROVEMENT: 'IMPROVEMENT',
+    BUG: 'BUG',
+    TECHNICAL: 'TECHNICAL',
+};
+
+export const FEEDBACK_STATUS = {
+    NEW: 'NEW',
+    IN_PROGRESS: 'IN_PROGRESS',
+    RESOLVED: 'RESOLVED',
+    CLOSED: 'CLOSED',
+};
+
+export const REFERRAL_STATUS = {
+    PENDING: 'PENDING',
+    ACTIVE: 'ACTIVE',
+    INACTIVE: 'INACTIVE',
+};
